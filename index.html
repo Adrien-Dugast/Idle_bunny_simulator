@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lapini simulator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header>
+      <div>
+        <h1>Lapini simulator</h1>
+        <p>Embauche tes petits lapins pour te couper de l'herbe.</p>
+        <div class="hero-placeholder">
+          <img src="images/grass.png" alt="Grass" class="grass-image" />
+        </div>
+        <div id="notification" class="notification"></div>
+      </div>
+      <div class="stats">
+        <div class="stat-row">
+          <span>Herbe</span>
+          <strong id="grass-count">0</strong>
+        </div>
+        <div class="stat-row">
+          <span>HPS (herbe / sec)</span>
+          <strong id="grass-per-second">0</strong>
+        </div>
+      </div>
+    </header>
+
+    <div class="game-layout">
+      <main>
+        <section class="actions">
+          <button id="harvest-button">Récolter de l'herbe</button>
+          <div class="hint">Clique ou attends que les lapins récoltent automatiquement.</div>
+        </section>
+
+        <section class="store">
+          <h2>Recruter des lapins</h2>
+          <div class="cards" id="rabbit-cards"></div>
+        </section>
+      </main>
+
+      <div class="side-panel">
+        <nav class="tabs">
+          <button id="field-tab" class="tab-button active">Prairie</button>
+          <button id="achievement-tab" class="tab-button">Succès</button>
+        </nav>
+
+        <div class="tab-content">
+          <section class="bunny-field active">
+            <h2>Ton pré</h2>
+            <div id="bunny-field" class="bunny-field-container"></div>
+            <h2>Améliorations</h2>
+            <div id="upgrade-cards" class="upgrade-cards-grid"></div>
+          </section>
+
+          <section class="achievements">
+            <h2>Succès</h2>
+            <ul id="achievement-list" class="achievement-list"></ul>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>Sauvegardé dans ton navigateur. Ton pré pousse même quand tu es absent.</p>
+    </footer>
+  </div>
+
+  <script src="script.js?v=4"></script>
+</body>
+</html>
