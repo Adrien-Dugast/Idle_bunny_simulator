@@ -869,6 +869,7 @@ function renderCelestialPanel() {
       <span>Rois Lapins au prochain prestige</span>
       <strong>+${gain}</strong>
     </div>
+    <p class="celestial-hint">Chaque Roi Lapin donne +5% de revenus en permanence.</p>
     <p class="celestial-hint">Le prestige remet à zéro ton herbe, tes lapins et tes améliorations, mais tes Rois Lapins restent.</p>
     <button id="prestige-button" class="prestige-button" ${gain === 0 ? 'disabled' : ''}>
       ✨ Lancer le prestige (+${gain})
