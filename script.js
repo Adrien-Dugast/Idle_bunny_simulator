@@ -178,8 +178,10 @@ const upgradeDefinitions = [
 
 const state = {
   grass: 0,
-  rabbits: {},   // typeId → current level (0 = not owned)
-  upgrades: {},  // upgradeId → true/false
+  rabbits: {},          // typeId → current level (0 = not owned)
+  upgrades: {},         // upgradeId → true/false
+  celestialLapins: 0,   // survives prestige
+  lifetimeEarnings: 0,  // resets on prestige
   lastSave: Date.now(),
 };
 
@@ -188,56 +190,95 @@ rabbitTypes.forEach((type) => {
 });
 
 const achievements = [
-  { name: 'Un lapinou !',            condition: () => state.rabbits.meadow >= 1 },
-  { name: 'Petit herbivore',         condition: () => state.rabbits.meadow >= 10 },
-  { name: 'Roi du pré',              condition: () => state.rabbits.meadow >= 25 },
-  { name: 'Tonte express',           condition: () => state.rabbits.meadow >= 50 },
-  { name: 'Pelouse rasée',           condition: () => state.rabbits.meadow >= 100 },
-  { name: 'Lapin des bois !',        condition: () => state.rabbits.forest >= 1 },
-  { name: 'Cueilleur en chef',       condition: () => state.rabbits.forest >= 10 },
-  { name: 'Truffe forestière',       condition: () => state.rabbits.forest >= 25 },
-  { name: 'Sous-bois dévoré',        condition: () => state.rabbits.forest >= 50 },
-  { name: 'La forêt tremble',        condition: () => state.rabbits.forest >= 100 },
-  { name: 'Lapins en altitude !',    condition: () => state.rabbits.snow >= 1 },
-  { name: 'Grimpeur du dimanche',    condition: () => state.rabbits.snow >= 10 },
-  { name: 'Acrobate arboricole',     condition: () => state.rabbits.snow >= 25 },
-  { name: 'La branche plie',         condition: () => state.rabbits.snow >= 50 },
-  { name: 'Sommet tondu',            condition: () => state.rabbits.snow >= 100 },
-  { name: 'Immigrant aperçu !',      condition: () => state.rabbits.golden >= 1 },
-  { name: 'Fuite réussie',           condition: () => state.rabbits.golden >= 10 },
-  { name: 'Planqué chevronné',       condition: () => state.rabbits.golden >= 25 },
-  { name: 'Introuvable',             condition: () => state.rabbits.golden >= 50 },
-  { name: 'Fantôme du pré',          condition: () => state.rabbits.golden >= 100 },
-  { name: 'Glouton détecté !',       condition: () => state.rabbits.desert >= 1 },
-  { name: 'Ventre bien rempli',      condition: () => state.rabbits.desert >= 10 },
-  { name: 'Mange-tout officiel',     condition: () => state.rabbits.desert >= 25 },
-  { name: 'Plus rien à manger ici',  condition: () => state.rabbits.desert >= 50 },
-  { name: 'Apocalypse herbivore',    condition: () => state.rabbits.desert >= 100 },
-  { name: 'Renifleur embauché !',    condition: () => state.rabbits.mountain >= 1 },
-  { name: 'Nez en alerte',           condition: () => state.rabbits.mountain >= 10 },
-  { name: 'Expert narines',          condition: () => state.rabbits.mountain >= 25 },
-  { name: 'Détecte les truffes',     condition: () => state.rabbits.mountain >= 50 },
-  { name: 'Nez d\'or',              condition: () => state.rabbits.mountain >= 100 },
-  { name: 'Sportif recruté !',       condition: () => state.rabbits.ocean >= 1 },
-  { name: 'Échauffement terminé',    condition: () => state.rabbits.ocean >= 10 },
-  { name: 'Cardio de champion',      condition: () => state.rabbits.ocean >= 25 },
-  { name: 'Marathon du pré',         condition: () => state.rabbits.ocean >= 50 },
-  { name: 'Lance dopé à l\'herbe',  condition: () => state.rabbits.ocean >= 100 },
-  { name: 'Il se frotte les yeux',   condition: () => state.rabbits.space >= 1 },
-  { name: 'Debout le matin',         condition: () => state.rabbits.space >= 10 },
-  { name: 'Boxeur du pré',           condition: () => state.rabbits.space >= 25 },
-  { name: 'Uppercut végétal',        condition: () => state.rabbits.space >= 50 },
-  { name: 'Champion toutes catés',   condition: () => state.rabbits.space >= 100 },
+  { name: 'Un lapinou !',              condition: () => state.rabbits.meadow >= 1 },
+  { name: 'Petit herbivore',           condition: () => state.rabbits.meadow >= 10 },
+  { name: 'Roi du pré',               condition: () => state.rabbits.meadow >= 25 },
+  { name: 'Tonte express',            condition: () => state.rabbits.meadow >= 50 },
+  { name: 'Pelouse rasée',            condition: () => state.rabbits.meadow >= 100 },
+  { name: 'Pré nucléaire',            condition: () => state.rabbits.meadow >= 200 },
+  { name: 'Pré sur Mars',             condition: () => state.rabbits.meadow >= 300 },
+  { name: 'Herbe infinie',            condition: () => state.rabbits.meadow >= 400 },
+
+  { name: 'Lapin des bois !',         condition: () => state.rabbits.forest >= 1 },
+  { name: 'Cueilleur en chef',        condition: () => state.rabbits.forest >= 10 },
+  { name: 'Truffe forestière',        condition: () => state.rabbits.forest >= 25 },
+  { name: 'Sous-bois dévoré',         condition: () => state.rabbits.forest >= 50 },
+  { name: 'La forêt tremble',         condition: () => state.rabbits.forest >= 100 },
+  { name: 'La forêt disparaît',       condition: () => state.rabbits.forest >= 200 },
+  { name: 'Déforestation totale',     condition: () => state.rabbits.forest >= 300 },
+  { name: 'A mangé l\'Amazonie',      condition: () => state.rabbits.forest >= 400 },
+
+  { name: 'Lapins en altitude !',     condition: () => state.rabbits.snow >= 1 },
+  { name: 'Grimpeur du dimanche',     condition: () => state.rabbits.snow >= 10 },
+  { name: 'Acrobate arboricole',      condition: () => state.rabbits.snow >= 25 },
+  { name: 'La branche plie',          condition: () => state.rabbits.snow >= 50 },
+  { name: 'Sommet tondu',             condition: () => state.rabbits.snow >= 100 },
+  { name: 'Zorro des branches',       condition: () => state.rabbits.snow >= 200 },
+  { name: 'Propriétaire des arbres',  condition: () => state.rabbits.snow >= 300 },
+  { name: 'Vit dans les arbres',      condition: () => state.rabbits.snow >= 400 },
+
+  { name: 'Immigrant aperçu !',       condition: () => state.rabbits.golden >= 1 },
+  { name: 'Fuite réussie',            condition: () => state.rabbits.golden >= 10 },
+  { name: 'Planqué chevronné',        condition: () => state.rabbits.golden >= 25 },
+  { name: 'Introuvable',              condition: () => state.rabbits.golden >= 50 },
+  { name: 'Fantôme du pré',           condition: () => state.rabbits.golden >= 100 },
+  { name: 'Introuvable depuis 10 ans',condition: () => state.rabbits.golden >= 200 },
+  { name: 'Fantôme de la prairie',    condition: () => state.rabbits.golden >= 300 },
+  { name: 'Même Interpol le cherche', condition: () => state.rabbits.golden >= 400 },
+
+  { name: 'Glouton détecté !',        condition: () => state.rabbits.desert >= 1 },
+  { name: 'Ventre bien rempli',       condition: () => state.rabbits.desert >= 10 },
+  { name: 'Mange-tout officiel',      condition: () => state.rabbits.desert >= 25 },
+  { name: 'Plus rien à manger ici',   condition: () => state.rabbits.desert >= 50 },
+  { name: 'Apocalypse herbivore',     condition: () => state.rabbits.desert >= 100 },
+  { name: 'Plus rien nulle part',     condition: () => state.rabbits.desert >= 200 },
+  { name: 'Mange les nuages',         condition: () => state.rabbits.desert >= 300 },
+  { name: 'A avalé un tracteur',      condition: () => state.rabbits.desert >= 400 },
+
+  { name: 'Renifleur embauché !',     condition: () => state.rabbits.mountain >= 1 },
+  { name: 'Nez en alerte',            condition: () => state.rabbits.mountain >= 10 },
+  { name: 'Expert narines',           condition: () => state.rabbits.mountain >= 25 },
+  { name: 'Détecte les truffes',      condition: () => state.rabbits.mountain >= 50 },
+  { name: "Nez d'or",                 condition: () => state.rabbits.mountain >= 100 },
+  { name: 'Détecte les mensonges',    condition: () => state.rabbits.mountain >= 200 },
+  { name: 'Nez de dieu',              condition: () => state.rabbits.mountain >= 300 },
+  { name: 'Sent venir le futur',      condition: () => state.rabbits.mountain >= 400 },
+
+  { name: 'Sportif recruté !',        condition: () => state.rabbits.ocean >= 1 },
+  { name: 'Échauffement terminé',     condition: () => state.rabbits.ocean >= 10 },
+  { name: 'Cardio de champion',       condition: () => state.rabbits.ocean >= 25 },
+  { name: 'Marathon du pré',          condition: () => state.rabbits.ocean >= 50 },
+  { name: "Lance dopé à l'herbe",     condition: () => state.rabbits.ocean >= 100 },
+  { name: 'Athlète olympique',        condition: () => state.rabbits.ocean >= 200 },
+  { name: 'Dépasse Usain Bolt',       condition: () => state.rabbits.ocean >= 300 },
+  { name: 'Vitesse de la lumière',    condition: () => state.rabbits.ocean >= 400 },
+
+  { name: 'Il se frotte les yeux',    condition: () => state.rabbits.space >= 1 },
+  { name: 'Debout le matin',          condition: () => state.rabbits.space >= 10 },
+  { name: 'Boxeur du pré',            condition: () => state.rabbits.space >= 25 },
+  { name: 'Uppercut végétal',         condition: () => state.rabbits.space >= 50 },
+  { name: 'Champion toutes catés',    condition: () => state.rabbits.space >= 100 },
+  { name: 'Rocky Lapino',             condition: () => state.rabbits.space >= 200 },
+  { name: 'KO en 3 pattes',           condition: () => state.rabbits.space >= 300 },
+  { name: 'Poing intergalactique',    condition: () => state.rabbits.space >= 400 },
+
   { name: 'Rouquin repéré !',         condition: () => state.rabbits.cosmic >= 1 },
-  { name: 'Complexe du poil roux',   condition: () => state.rabbits.cosmic >= 10 },
-  { name: 'Vengeance en cours',      condition: () => state.rabbits.cosmic >= 25 },
-  { name: 'Plus jamais moqué',       condition: () => state.rabbits.cosmic >= 50 },
-  { name: 'Il a eu le dernier mot',  condition: () => state.rabbits.cosmic >= 100 },
-  { name: 'Le divin apparaît !',     condition: () => state.rabbits.divine >= 1 },
-  { name: 'Herbe qui pousse seule',  condition: () => state.rabbits.divine >= 10 },
-  { name: 'Miracle végétal',         condition: () => state.rabbits.divine >= 25 },
-  { name: 'Prophète du pré',         condition: () => state.rabbits.divine >= 50 },
-  { name: 'Dieu de l\'herbe',       condition: () => state.rabbits.divine >= 100 },
+  { name: 'Complexe du poil roux',    condition: () => state.rabbits.cosmic >= 10 },
+  { name: 'Vengeance en cours',       condition: () => state.rabbits.cosmic >= 25 },
+  { name: 'Plus jamais moqué',        condition: () => state.rabbits.cosmic >= 50 },
+  { name: 'Il a eu le dernier mot',   condition: () => state.rabbits.cosmic >= 100 },
+  { name: 'Armée de roux',            condition: () => state.rabbits.cosmic >= 200 },
+  { name: 'La vengeance est douce',   condition: () => state.rabbits.cosmic >= 300 },
+  { name: 'Le roux a gagné',          condition: () => state.rabbits.cosmic >= 400 },
+
+  { name: 'Le divin apparaît !',      condition: () => state.rabbits.divine >= 1 },
+  { name: 'Herbe qui pousse seule',   condition: () => state.rabbits.divine >= 10 },
+  { name: 'Miracle végétal',          condition: () => state.rabbits.divine >= 25 },
+  { name: 'Prophète du pré',          condition: () => state.rabbits.divine >= 50 },
+  { name: "Dieu de l'herbe",          condition: () => state.rabbits.divine >= 100 },
+  { name: 'Herbe sacrée en abondance',condition: () => state.rabbits.divine >= 200 },
+  { name: "L'herbe pousse en pensant",condition: () => state.rabbits.divine >= 300 },
+  { name: 'Omnipotent du gazon',      condition: () => state.rabbits.divine >= 400 },
 ];
 
 const elements = {
@@ -251,6 +292,7 @@ const elements = {
   achievementList:   document.getElementById('achievement-list'),
   fieldTab:          document.getElementById('field-tab'),
   achievementTab:    document.getElementById('achievement-tab'),
+  celestialTab:      document.getElementById('celestial-tab'),
 };
 
 // ── Number formatting ────────────────────────────────────────────────────────
@@ -283,10 +325,17 @@ function getCost(type) {
   return getLevelUpCost(type, state.rabbits[type.id]);
 }
 
-// ×2 at levels 25, 50, 100, 200, 300, 400
+// ×2 at levels 25, 50, 100, 200, 300, 400 (per rabbit)
 const MILESTONES = [25, 50, 100, 200, 300, 400];
 function getMilestoneMultiplier(L) {
   const count = MILESTONES.filter(m => L >= m).length;
+  return Math.pow(2, count);
+}
+
+// ×2 for every milestone threshold where ALL rabbits are at or above that level
+function computeAllRabbitMilestoneMultiplier() {
+  const minLevel = Math.min(...rabbitTypes.map(t => state.rabbits[t.id]));
+  const count = MILESTONES.filter(m => minLevel >= m).length;
   return Math.pow(2, count);
 }
 
@@ -308,13 +357,23 @@ function computeRabbitMultiplier(typeId) {
   return R;
 }
 
+function computeCelestialMultiplier() {
+  return 1 + 0.05 * state.celestialLapins;
+}
+
+function getCelestialGain() {
+  return Math.floor(Math.sqrt(state.lifetimeEarnings / (400e9 / 9)));
+}
+
 function getTotalProduction(type) {
   const L = state.rabbits[type.id];
   if (L === 0) return 0;
   const M = getMilestoneMultiplier(L);
   const G = computeGlobalMultiplier();
   const R = computeRabbitMultiplier(type.id);
-  return type.baseGPS * L * M * G * R;
+  const C = computeCelestialMultiplier();
+  const A = computeAllRabbitMilestoneMultiplier();
+  return type.baseGPS * L * M * G * R * C * A;
 }
 
 function computeGrassPerSecond() {
@@ -354,10 +413,20 @@ function loadState() {
       state.grass = parsed.grass;
       state.rabbits = { ...state.rabbits, ...parsed.rabbits };
       state.upgrades = { ...(parsed.upgrades || {}) };
+      state.celestialLapins = parsed.celestialLapins || 0;
+      state.lifetimeEarnings = parsed.lifetimeEarnings || 0;
       state.lastSave = parsed.lastSave || state.lastSave;
       const offlineSeconds = Math.min(Math.floor((Date.now() - state.lastSave) / 1000), 86400);
       const gps = computeGrassPerSecond();
-      if (offlineSeconds > 0 && gps > 0) state.grass += gps * offlineSeconds;
+      if (offlineSeconds > 0 && gps > 0) {
+        const offlineGain = gps * offlineSeconds;
+        state.grass += offlineGain;
+        state.lifetimeEarnings += offlineGain;
+        const hours   = Math.floor(offlineSeconds / 3600);
+        const minutes = Math.floor((offlineSeconds % 3600) / 60);
+        const timeStr = hours > 0 ? `${hours}h${minutes}min` : `${minutes}min`;
+        setTimeout(() => showNotification(`Absence de ${timeStr} — +${formatGrass(offlineGain)} herbe !`), 500);
+      }
     }
   } catch (err) {
     console.warn('Failed to load save state', err);
@@ -560,6 +629,7 @@ function updateStats() {
     elements.multiplierDisplay.textContent = '×' + S.toFixed(2);
   }
   refreshStoreButtons();
+  renderCelestialPanel();
 }
 
 function updateUI() {
@@ -567,6 +637,7 @@ function updateUI() {
   renderUpgrades();
   updateStats();
   updateAchievements();
+  renderCelestialPanel();
 }
 
 // ── Purchases ────────────────────────────────────────────────────────────────
@@ -681,8 +752,19 @@ function switchTab(tabButton, sectionClass) {
 
 // ── Core loop ─────────────────────────────────────────────────────────────────
 
+function debugAddGrass() {
+  const input = document.getElementById('debug-amount');
+  const amount = parseFloat(input.value);
+  if (!isNaN(amount) && amount > 0) {
+    state.grass += amount;
+    state.lifetimeEarnings += amount;
+    updateStats();
+  }
+}
+
 function harvest() {
   state.grass += 1;
+  state.lifetimeEarnings += 1;
   updateStats();
   saveState();
 }
@@ -690,7 +772,9 @@ function harvest() {
 function tick(dtSeconds) {
   const production = computeGrassPerSecond();
   if (production > 0) {
-    state.grass += production * dtSeconds;
+    const gained = production * dtSeconds;
+    state.grass += gained;
+    state.lifetimeEarnings += gained;
     updateStats();
   }
 }
@@ -705,6 +789,8 @@ function animateBunnies() {
 
 function resetProgress() {
   state.grass = 0;
+  state.celestialLapins = 0;
+  state.lifetimeEarnings = 0;
   rabbitTypes.forEach(type => { state.rabbits[type.id] = 0; });
   upgradeDefinitions.forEach(upg => { state.upgrades[upg.id] = false; });
   state.lastSave = Date.now();
@@ -714,6 +800,99 @@ function resetProgress() {
   saveState();
   switchTab(elements.fieldTab, 'bunny-field');
   alert('Progression réinitialisée ! Ton pré est vide à nouveau.');
+}
+
+// ── Save import / export ─────────────────────────────────────────────────────
+
+function exportSave() {
+  const json = JSON.stringify(state);
+  const encoded = btoa(encodeURIComponent(json))
+    .split('').reverse().join('');          // base64, then reversed
+  const blob = new Blob([encoded], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'lapini-save.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importSave(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const encoded = e.target.result.trim();
+      const base64 = encoded.split('').reverse().join('');
+      const json = decodeURIComponent(atob(base64));
+      const parsed = JSON.parse(json);
+      if (typeof parsed.grass !== 'number' || !parsed.rabbits) throw new Error('invalid');
+      state.grass = parsed.grass;
+      state.rabbits = { ...state.rabbits, ...parsed.rabbits };
+      state.upgrades = { ...(parsed.upgrades || {}) };
+      state.celestialLapins = parsed.celestialLapins || 0;
+      state.lifetimeEarnings = parsed.lifetimeEarnings || 0;
+      state.lastSave = parsed.lastSave || Date.now();
+      unlockedAchievements.clear();
+      achievements.forEach(ach => { if (ach.condition()) unlockedAchievements.add(ach.name); });
+      updateBunnyField();
+      updateUI();
+      saveState();
+      showNotification('Sauvegarde chargée avec succès !');
+    } catch {
+      showNotification('Fichier de sauvegarde invalide.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ── Prestige ──────────────────────────────────────────────────────────────────
+
+function renderCelestialPanel() {
+  const panel = document.getElementById('celestial-panel');
+  if (!panel) return;
+  const gain = getCelestialGain();
+  const current = state.celestialLapins;
+  const bonus = (current * 5).toFixed(0);
+  panel.innerHTML = `
+    <img src="images/roi_lapin.png" alt="Roi Lapin" class="roi-lapin-img" />
+    <div class="celestial-stat">
+      <span>Rois Lapins possédés</span>
+      <strong>${current}</strong>
+    </div>
+    <div class="celestial-stat">
+      <span>Bonus actuel</span>
+      <strong>+${bonus}% de revenus</strong>
+    </div>
+    <hr class="celestial-divider" />
+    <div class="celestial-stat">
+      <span>Rois Lapins au prochain prestige</span>
+      <strong>+${gain}</strong>
+    </div>
+    <p class="celestial-hint">Le prestige remet à zéro ton herbe, tes lapins et tes améliorations, mais tes Rois Lapins restent.</p>
+    <button id="prestige-button" class="prestige-button" ${gain === 0 ? 'disabled' : ''}>
+      ✨ Lancer le prestige (+${gain})
+    </button>
+  `;
+  document.getElementById('prestige-button')?.addEventListener('click', prestige);
+}
+
+function prestige() {
+  const gain = getCelestialGain();
+  if (gain === 0) return;
+  if (!confirm(`Tu vas gagner ${gain} Roi(s) Lapin et tout réinitialiser. Continuer ?`)) return;
+  state.celestialLapins += gain;
+  state.grass = 0;
+  state.lifetimeEarnings = 0;
+  rabbitTypes.forEach(type => { state.rabbits[type.id] = 0; });
+  upgradeDefinitions.forEach(upg => { state.upgrades[upg.id] = false; });
+  state.lastSave = Date.now();
+  unlockedAchievements.clear();
+  updateBunnyField();
+  updateUI();
+  saveState();
+  switchTab(elements.celestialTab, 'celestial');
+  showNotification(`👑 Prestige ! +${gain} Roi(s) Lapin !`);
 }
 
 function startAutoSave() {
@@ -726,8 +905,11 @@ function initialize() {
   updateUI();
   updateBunnyField();
   elements.harvestButton.addEventListener('click', harvest);
+  document.getElementById('export-save').addEventListener('click', exportSave);
+  document.getElementById('import-save').addEventListener('change', e => importSave(e.target.files[0]));
   elements.fieldTab.addEventListener('click', () => switchTab(elements.fieldTab, 'bunny-field'));
   elements.achievementTab.addEventListener('click', () => switchTab(elements.achievementTab, 'achievements'));
+  elements.celestialTab.addEventListener('click', () => switchTab(elements.celestialTab, 'celestial'));
   setInterval(animateBunnies, 5000);
   startAutoSave();
   setInterval(() => tick(1), 1000);

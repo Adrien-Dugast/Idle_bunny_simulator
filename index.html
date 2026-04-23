@@ -46,6 +46,7 @@
         <nav class="tabs">
           <button id="field-tab" class="tab-button active">Prairie</button>
           <button id="achievement-tab" class="tab-button">Succès</button>
+          <button id="celestial-tab" class="tab-button">👑 Roi Lapin</button>
         </nav>
 
         <div class="tab-content">
@@ -60,15 +61,27 @@
             <h2>Succès</h2>
             <ul id="achievement-list" class="achievement-list"></ul>
           </section>
+
+          <section class="celestial">
+            <h2>👑 Roi Lapin</h2>
+            <div id="celestial-panel"></div>
+          </section>
         </div>
       </div>
     </div>
 
     <footer>
       <p>Sauvegardé dans ton navigateur. Ton pré pousse même quand tu es absent.</p>
+      <div class="save-buttons">
+        <button id="export-save">Télécharger la sauvegarde</button>
+        <label class="import-label">
+          Charger une sauvegarde
+          <input id="import-save" type="file" accept=".txt" />
+        </label>
+      </div>
     </footer>
   </div>
 
-  <script src="script.js?v=4"></script>
+  <script src="script.js?v=6"></script>
 </body>
 </html>

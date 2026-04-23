@@ -367,6 +367,36 @@ footer {
   color: var(--muted);
 }
 
+.save-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.save-buttons button,
+.import-label {
+  padding: 8px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.save-buttons button:hover,
+.import-label:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.import-label input[type="file"] {
+  display: none;
+}
+
 .bunny-icon {
   width: 32px;
   height: 32px;
@@ -491,6 +521,62 @@ footer {
   text-align: center;
   display: block;
   margin-top: 4px;
+}
+
+.celestial {
+  text-align: center;
+}
+
+.roi-lapin-img {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  border-radius: 18px;
+  margin-bottom: 12px;
+}
+
+.celestial-stat {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  margin-bottom: 8px;
+}
+
+.celestial-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 14px 0;
+}
+
+.celestial-hint {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin: 12px 0;
+}
+
+.prestige-button {
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(135deg, #a78bfa, #7c3aed);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 0.2s ease, transform 0.2s ease;
+}
+
+.prestige-button:hover:not(:disabled) {
+  filter: brightness(1.12);
+  transform: translateY(-1px);
+}
+
+.prestige-button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
 }
 
 @media (min-width: 720px) {
