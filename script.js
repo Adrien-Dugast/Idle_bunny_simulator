@@ -377,9 +377,7 @@ function getTotalProduction(type) {
 }
 
 function computeGrassPerSecond() {
-  let gps = rabbitTypes.reduce((sum, type) => sum + getTotalProduction(type), 0);
-  if (gps > 1e12) gps = Math.pow(gps, 0.92);
-  return gps;
+  return rabbitTypes.reduce((sum, type) => sum + getTotalProduction(type), 0);
 }
 
 function getMaxAffordable(typeId) {
@@ -752,15 +750,6 @@ function switchTab(tabButton, sectionClass) {
 
 // ── Core loop ─────────────────────────────────────────────────────────────────
 
-function debugAddGrass() {
-  const input = document.getElementById('debug-amount');
-  const amount = parseFloat(input.value);
-  if (!isNaN(amount) && amount > 0) {
-    state.grass += amount;
-    state.lifetimeEarnings += amount;
-    updateStats();
-  }
-}
 
 function harvest() {
   state.grass += 1;
